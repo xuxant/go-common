@@ -1,0 +1,45 @@
+name: Code Quality
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  code-quality:
+    name: Verify Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          submodules: true
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.x
+          cache: false
+
+      - name: Private go repos
+        run: git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+      - uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --timeout=5m
+
+      - name: Test
+        run: go test -coverprofile coverage.out -v ./...
