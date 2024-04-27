@@ -41,7 +41,7 @@ func (MetadataMixin) Fields() []ent.Field {
 			Default(time.Now).
 			Immutable().
 			SchemaType(map[string]string{
-				dialect.Postgres: "timestamp excluding timezone",
+				dialect.Postgres: "timestamp without time zone",
 			}).
 			Annotations(
 				entgql.OrderField("CREATED_AT"),
@@ -50,7 +50,7 @@ func (MetadataMixin) Fields() []ent.Field {
 		field.Time("udated_at").
 			Default(time.Now).
 			SchemaType(map[string]string{
-				dialect.Postgres: "timestamp excluding timezone",
+				dialect.Postgres: "timestamp without time zone",
 			}).
 			Annotations(
 				entgql.OrderField("CREATED_AT"),
