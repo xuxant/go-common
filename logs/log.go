@@ -95,6 +95,6 @@ func InitializeLogger(loggingLevel string, preetyfy bool) zerolog.Logger {
 		)
 	}
 
-	logger.Info().Msgf("Active Profile: %s, Logging Level: %s", loggingLevel)
+	logger.Info().Msgf("Logging Level: %s", loggingLevel)
 	return logger
 }

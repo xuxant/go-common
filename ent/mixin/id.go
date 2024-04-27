@@ -25,8 +25,8 @@ func (IdMixin) Fields() []ent.Field {
 			Unique().
 			Comment("Identifier").
 			Annotations(
-				entgql.OrderField("ID").
-					entgql.Type("ID"),
+				entgql.OrderField("ID"),
+				entgql.Type("ID"),
 			),
 	}
 }
