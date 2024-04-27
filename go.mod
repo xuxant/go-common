@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
+	github.com/99designs/gqlgen v0.17.43
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.32.0
@@ -12,7 +13,6 @@ require (
 
 require (
 	ariga.io/atlas v0.19.1-0.20240203083654-5948b60a8e43 // indirect
-	github.com/99designs/gqlgen v0.17.43 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect

@@ -1,6 +1,8 @@
 package mixin
 
 import (
+	"context"
+	"fmt"
 	"time"
 
 	"entgo.io/contrib/entgql"
@@ -11,10 +13,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type condition func(context.Context, ent.Mutation) bool
+
 type IdMixin struct {
 	mixin.Schema
 }
 
+var TimeSchemaType = entgql.Type("DateTime")
 var DefaultMixins = []ent.Mixin{IdMixin{}, MetadataMixin{}}
 
 func (IdMixin) Fields() []ent.Field {
@@ -45,16 +50,67 @@ func (MetadataMixin) Fields() []ent.Field {
 			}).
 			Annotations(
 				entgql.OrderField("CREATED_AT"),
-				entgql.Type("DateTime"),
+				TimeSchemaType,
 			),
-		field.Time("udated_at").
+		field.Time("updated_at").
 			Default(time.Now).
 			SchemaType(map[string]string{
 				dialect.Postgres: "timestamp without time zone",
 			}).
 			Annotations(
-				entgql.OrderField("CREATED_AT"),
-				entgql.Type("DateTime"),
+				entgql.OrderField("UPDATED_AT"),
+				TimeSchemaType,
 			),
+	}
+}
+
+func hasOp(o ent.Op) condition {
+	return func(_ context.Context, m ent.Mutation) bool {
+		return m.Op().Is(o)
+	}
+}
+
+func (m MetadataMixin) Hooks() []ent.Hook {
+	return []ent.Hook{
+		on(
+			func(next ent.Mutator) ent.Mutator {
+				return ent.MutateFunc(func(ctx context.Context, mut ent.Mutation) (ent.Value, error) {
+					if s, ok := mut.(interface{ SetUpdatedAt(date time.Time) }); ok {
+						s.SetUpdatedAt(time.Now())
+					}
+
+					v, err := next.Mutate(ctx, mut)
+					if err != nil {
+						return nil, fmt.Errorf("failed to run mutation hook: %w", err)
+					}
+					return v, nil
+				})
+			},
+			ent.OpDelete|ent.OpUpdateOne,
+		),
+	}
+}
+
+func on(h ent.Hook, o ent.Op) ent.Hook {
+	return iif(h, hasOp(o))
+}
+
+func iif(h ent.Hook, c condition) ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if c(ctx, m) {
+				res, err := h(next).Mutate(ctx, m)
+				if err != nil {
+					return nil, fmt.Errorf("failed to run mutation hook: %T: %w", h, err)
+				}
+				return res, nil
+			}
+			res, err := next.Mutate(ctx, m)
+			if err != nil {
+				return nil, fmt.Errorf("failed to run mutation hook: %T: %w", h, err)
+			}
+
+			return res, nil
+		})
 	}
 }
