@@ -3,8 +3,8 @@ module github.com/xuxant/go-common
 go 1.22.1
 
 require (
-	entgo.io/contrib v0.5.0
-	entgo.io/ent v0.13.1
+	entgo.io/contrib v0.4.5
+	entgo.io/ent v0.12.5
 	github.com/99designs/gqlgen v0.17.43
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
