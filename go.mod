@@ -3,12 +3,13 @@ module github.com/xuxant/go-common
 go 1.22.1
 
 require (
-	entgo.io/contrib v0.4.5
-	entgo.io/ent v0.12.5
+	entgo.io/contrib v0.5.0
+	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.43
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.32.0
+	github.com/vektah/gqlparser/v2 v2.5.11
 )
 
 require (
@@ -39,7 +40,6 @@ require (
 	github.com/sosodev/duration v1.1.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.11 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9 // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
