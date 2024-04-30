@@ -1,9 +1,12 @@
 package gin
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+	errs "github.com/xuxant/go-common/errors"
 )
 
 func PanicHandlerMiddleware() gin.HandlerFunc {
@@ -39,4 +42,13 @@ func AddCorsMiddleware(origin, credentials, headers, methods string) gin.Handler
 
 		c.Next()
 	}
+}
+
+func SendError(c *gin.Context, err error) {
+	var serviceError *errs.Error
+	if !errors.As(err, &serviceError) {
+		serviceError = errs.Internal.WithDetail(err)
+	}
+	log.Ctx(c.Request.Context()).Error().Msgf("error executing request: %v (%v)", serviceError.Message, serviceError.Detail)
+	c.AbortWithStatusJSON(serviceError.HttpStatus, serviceError)
 }
